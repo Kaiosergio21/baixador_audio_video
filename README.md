@@ -49,6 +49,8 @@ Antes de executar o projeto, instale:
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp#installation)
 - [ffmpeg](https://ffmpeg.org/download.html)
 
+> ⚠️ Recomendado usar o vlc player afim de rodar os vídeos e áudios https://www.videolan.org/vlc/
+
 > ⚠️ Certifique-se de que `yt-dlp` e `ffmpeg` estejam acessíveis pelo sistema (ou configure os caminhos absolutos no código).
 
 ---
