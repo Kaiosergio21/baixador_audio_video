@@ -26,16 +26,25 @@ app.get('/download', (req, res) => {
   const ytDlpPath = 'C:\\yt-dlp\\yt-dlp.exe'; // Caminho do yt-dlp
   const ffmpegPath = 'C:\\ffmpeg\\bin';       // Caminho da pasta bin do ffmpeg
 
-  const formato = tipo === 'audio'
-    ? 'bestaudio'
-    : 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4';
+  let processo;
 
-  const processo = spawn(ytDlpPath, [
-    '-f', formato,
-    '--ffmpeg-location', ffmpegPath,
-    '-o', arquivoSaida,
-    url
-  ]);
+  if (tipo === 'audio') {
+    processo = spawn(ytDlpPath, [
+      url,
+      '--extract-audio',
+      '--audio-format', 'mp3',
+      '--ffmpeg-location', ffmpegPath,
+      '-o', arquivoSaida
+    ]);
+  } else {
+    const formato = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4';
+    processo = spawn(ytDlpPath, [
+      '-f', formato,
+      '--ffmpeg-location', ffmpegPath,
+      '-o', arquivoSaida,
+      url
+    ]);
+  }
 
   processo.stderr.on('data', data => {
     console.error(`yt-dlp stderr: ${data}`);
@@ -51,7 +60,7 @@ app.get('/download', (req, res) => {
         }
       });
     } else {
-      res.status(500).send('Falha ao baixar vídeo');
+      res.status(500).send('Falha ao baixar o arquivo');
     }
   });
 
