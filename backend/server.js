@@ -11,11 +11,17 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.get('/download', (req, res) => {
   const { url, tipo } = req.query;
 
+  const timestamp = Date.now();
+
+
+
+
+
+
   if (!url || !tipo) {
     return res.status(400).send('Parâmetros inválidos');
   }
-
-  const nomeArquivo = tipo === 'audio' ? 'audio.mp3' : 'video.mp4';
+const nomeArquivo = tipo === 'audio' ? `audio-${timestamp}.mp3` : `video-${timestamp}.mp4`;
   const arquivoSaida = path.join(__dirname, nomeArquivo);
 
   // Exclui arquivo anterior, se existir
@@ -37,13 +43,17 @@ app.get('/download', (req, res) => {
       '-o', arquivoSaida
     ]);
   } else {
-    const formato = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4';
-    processo = spawn(ytDlpPath, [
-      '-f', formato,
-      '--ffmpeg-location', ffmpegPath,
-      '-o', arquivoSaida,
-      url
-    ]);
+   const formato = 'bv+ba/best';
+
+processo = spawn(ytDlpPath, [
+  '-f', formato,
+  '--merge-output-format', 'mp4', // força a junção em MP4
+  '--ffmpeg-location', ffmpegPath,
+  '-o', arquivoSaida,
+  url
+]);
+
+  
   }
 
   processo.stderr.on('data', data => {
@@ -73,4 +83,4 @@ app.get('/download', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+}); 
